@@ -1,0 +1,5 @@
+.terraform
+terraform.tfstate
+secretenv
+env
+.env
