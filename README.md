@@ -5,6 +5,7 @@ This project uses Terraform (IaC) to deploy the Autospotr plaform to Firebase
 ### Requirements
 - Google Cloud Service Account
 - [Install gcloud CLI](https://cloud.google.com/sdk/docs/install)
+- [Install Cloud Build for GitHub App](https://github.com/apps/google-cloud-build)
 - [Install Terraform](https://developer.hashicorp.com/terraform/install)
 
 ---

@@ -1,3 +1,4 @@
+variable env {}
 variable project_id {}
 variable web_app_vms_name {}
 
