@@ -1,6 +1,7 @@
 variable env {}
 variable gh_gcb_secret_name {}
 variable project_id {}
+variable pubsub_name {}
 variable secret_id {}
 variable service_account_id {}
 
@@ -75,6 +76,11 @@ resource "google_service_account_iam_member" "token_creator" {
   member              = "serviceAccount:${google_service_account.service_account.email}"
 }
 
+resource "google_pubsub_topic_iam_member" "transcoder_topic_iam" {
+  topic           = var.pubsub_name
+  role            = "roles/editor" # Adjust to least privilege (e.g., roles/pubsub.publisher)
+  member          = "serviceAccount:${google_service_account.service_account.email}"
+}
 
 # data "google_iam_policy" "secret_accessor" {
 

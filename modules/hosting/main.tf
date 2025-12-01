@@ -8,6 +8,7 @@ variable gh_token {}
 variable gh_uri {}
 variable gh_username {}
 variable gh_vms_repo {}
+variable hosting_game_site_id_postfix {}
 variable hosting_vms_site_id_postfix {}
 variable project_id {}
 variable region {}
@@ -34,43 +35,50 @@ terraform {
 }
 
 # 3. Create a Firebase Hosting Site
-resource "google_firebase_hosting_site" "default_site" {
+resource "google_firebase_hosting_site" "game_site" {
+  provider    = google-beta.default
+  project     = var.project_id 
+  site_id     = "${var.env}${var.hosting_game_site_id_postfix}" # Choose a unique site ID
+}
+
+# 3. Create a Firebase Hosting Site
+resource "google_firebase_hosting_site" "vms_site" {
   provider    = google-beta.default
   project     = var.project_id 
   site_id     = "${var.env}${var.hosting_vms_site_id_postfix}" # Choose a unique site ID
 }
 
-# 1. Create a Google Cloud Build v2 Connection to GitHub
-resource "google_cloudbuildv2_connection" "github_connection" {
+# # 1. Create a Google Cloud Build v2 Connection to GitHub
+# resource "google_cloudbuildv2_connection" "github_connection" {
   
-  project     = var.project_id
-  location    = var.region # Must be a specific region, not global
-  name        = "${var.env}${var.cloudbuild_connection_vms_name_postfix}"
+#   project     = var.project_id
+#   location    = var.region # Must be a specific region, not global
+#   name        = "${var.env}${var.cloudbuild_connection_vms_name_postfix}"
 
-  github_config {
+#   github_config {
 
-    # Replace with your GitHub App installation ID if you are using the app integration
-    # app_installation_id = 0 
+#     # Replace with your GitHub App installation ID if you are using the app integration
+#     # app_installation_id = 0 
 
-    # Use a Personal Access Token stored in Secret Manager for simple setup
-    authorizer_credential {
-      oauth_token_secret_version = var.gh_gcb_secret_version_id
-    }
+#     # Use a Personal Access Token stored in Secret Manager for simple setup
+#     authorizer_credential {
+#       oauth_token_secret_version = var.gh_gcb_secret_version_id
+#     }
 
-  }
+#   }
 
-}
+# }
 
-# 2. Link the specific GitHub repository to the connection
-resource "google_cloudbuildv2_repository" "github_repo" {
+# # 2. Link the specific GitHub repository to the connection
+# resource "google_cloudbuildv2_repository" "github_repo" {
 
-  project                 = var.project_id
-  name                    = "my-terraform-ghe-repo" # A name for the repo in GCP
-  location                = var.region
-  parent_connection       = google_cloudbuildv2_connection.github_connection.name
-  remote_uri              = var.gh_uri
+#   project                 = var.project_id
+#   name                    = "my-terraform-ghe-repo" # A name for the repo in GCP
+#   location                = var.region
+#   parent_connection       = google_cloudbuildv2_connection.github_connection.name
+#   remote_uri              = var.gh_uri
 
-}
+# }
 
 
 # # 4. Create a Cloud Build trigger for GitHub
@@ -103,7 +111,7 @@ resource "google_cloudbuildv2_repository" "github_repo" {
 
 # Output the Firebase Hosting site URL
 output "firebase_hosting_url" {
-  value = "https://${google_firebase_hosting_site.default_site.site_id}.web.app"
+  value = "https://${google_firebase_hosting_site.vms_site.site_id}.web.app"
 }
 
 # resource "google_storage_bucket" "default" {
